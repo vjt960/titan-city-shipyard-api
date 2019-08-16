@@ -37,6 +37,20 @@ app.get('/api/v1/ships', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
+app.get('/api/v1/shipyard', (request, response) => {
+  // const shipAttributes = ['id', 'make', 'model', 'pad_size', 'cost'];
+  const pilotAttributes = [
+    'pilots.id',
+    'pilots.pilot_federation_id',
+    'pilots.callsign',
+    'pilot_ships.ship_id'
+  ];
+  database('pilots')
+    .join('pilot_ships', 'pilots.id', '=', 'pilot_ships.pilot.id')
+    .select(...pilotAttributes)
+    .then(data => response.status(200).json(data));
+});
+
 app.get('/api/v1/pilots/:id', (request, response) => {
   const pilotAttributes = [
     'id',
