@@ -45,14 +45,14 @@ const pilotsData = [
     serial: 1122434,
     first: 'Pat',
     surname: 'Goulding',
-    callsign: 'Stickers',
+    callsign: 'Booze',
     blacklist: false
   },
   {
     serial: 5545771,
     first: 'Taylor',
     surname: 'Jordan',
-    callsign: 'Fortune Teller',
+    callsign: 'Stargazer',
     blacklist: false
   },
   {
@@ -80,7 +80,7 @@ const pilotsData = [
     serial: 1122334,
     first: 'Anna',
     surname: 'Olsen',
-    callsign: 'Who',
+    callsign: 'Soprano',
     blacklist: false
   },
   {
@@ -122,7 +122,7 @@ const pilotsData = [
     serial: 8895443,
     first: 'Emily',
     surname: 'Lalonde',
-    callsign: 'The Other',
+    callsign: 'LaLa',
     blacklist: false
   },
   {
@@ -136,7 +136,7 @@ const pilotsData = [
     serial: 6998556,
     first: 'Jacqueline',
     surname: 'Moore',
-    callsign: 'Gardener',
+    callsign: 'Myco',
     blacklist: false
   },
   {
@@ -150,7 +150,7 @@ const pilotsData = [
     serial: 8084545,
     first: 'Kayla',
     surname: 'Larson',
-    callsign: 'Wizard',
+    callsign: 'Ravenclaw',
     blacklist: false
   },
   {
@@ -171,14 +171,14 @@ const pilotsData = [
     serial: 7200379,
     first: 'Ryan',
     surname: 'Flachman',
-    callsign: 'Marine',
+    callsign: 'Devil Dog',
     blacklist: false
   },
   {
     serial: 4756744,
     first: 'Steve',
     surname: 'Rumizen',
-    callsign: 'Maverick',
+    callsign: 'Professor',
     blacklist: false
   },
   {
@@ -192,7 +192,7 @@ const pilotsData = [
     serial: 1202444,
     first: 'Will',
     surname: 'Mitchell',
-    callsign: 'wmitchell',
+    callsign: 'Maverick',
     blacklist: false
   },
   {
