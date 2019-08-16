@@ -26,3 +26,11 @@ app.get('/api/v1/pilots', (request, response) => {
     .then(pilots => response.status(200).json(pilots))
     .catch(error => response.status(500).json({ error }));
 });
+
+app.get('/api/v1/ships', (request, response) => {
+  const shipAttributes = ['make', 'model', 'pad_size', 'cost'];
+  database('ships')
+    .select(...shipAttributes)
+    .then(ships => response.status(200).json(ships))
+    .catch(error => response.status(500).json({ error }));
+});
