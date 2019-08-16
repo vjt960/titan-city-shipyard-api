@@ -1,7 +1,7 @@
 module.exports = {
   development: {
     client: 'pg',
-    connection: 'postgres://localhost/shipyard',
+    connection: process.env.DATABASE_URL + '?ssl=true',
     useNullAsDefault: true,
     migrations: {
       directory: './migrations'
