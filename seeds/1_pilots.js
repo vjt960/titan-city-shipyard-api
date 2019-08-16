@@ -11,15 +11,19 @@ const createPilot = (knex, pilot) => {
 };
 
 exports.seed = knex => {
-  return knex('pilots')
+  return knex('pilot_ships')
     .del()
-    .then(() => {
-      return Promise.all(
-        pilotsData.reduce((pilotPromises, pilot) => {
-          pilotPromises.push(createPilot(knex, pilot));
-          return pilotPromises;
-        }, [])
-      );
-    })
+    .then(() =>
+      knex('pilots')
+        .del()
+        .then(() => {
+          return Promise.all(
+            pilotsData.reduce((pilotPromises, pilot) => {
+              pilotPromises.push(createPilot(knex, pilot));
+              return pilotPromises;
+            }, [])
+          );
+        })
+    )
     .catch(error => console.log(`Error seeding data: ${error}`));
 };
