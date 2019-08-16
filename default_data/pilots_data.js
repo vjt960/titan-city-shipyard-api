@@ -28,7 +28,7 @@ const pilotsData = [
     blacklist: false
   },
   {
-    serial: 0987656,
+    serial: 1987656,
     first: 'Jev',
     surname: 'Forsberg',
     callsign: 'Jazz',
