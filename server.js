@@ -135,3 +135,17 @@ app.get('/api/v1/ships/:id', (request, response) => {
     })
     .catch(error => response.status(500).json({ error }));
 });
+
+app.post('/api/v1/pilots', (request, response) => {
+  const { pilot } = request.body;
+  if (pilot) {
+    database('pilots')
+      .insert({ ...pilot, is_wanted: false }, 'id')
+      .then(id => response.status(201).json(...id));
+  } else {
+    return response
+      .status(404)
+      .send({ error: 'Pilot key not present in payload.' });
+  }
+});
+
