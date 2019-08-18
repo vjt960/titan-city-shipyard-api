@@ -2,7 +2,8 @@ const express = require('express');
 const app = express();
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
-const database = require('knex')(configuration);
+const knex = require('knex');
+const database = knex(configuration);
 
 app.set('port', process.env.PORT || 3000);
 app.use(express.json());
@@ -31,9 +32,69 @@ app.get('/api/v1/pilots', (request, response) => {
 
 app.get('/api/v1/ships', (request, response) => {
   const shipAttributes = ['id', 'make', 'model', 'pad_size', 'cost'];
-  database('ships')
-    .select(...shipAttributes)
-    .then(ships => response.status(200).json(ships))
+  const { manufacturer } = request.query;
+  const makes = [
+    'ZORGON PETERSON',
+    'LAKON SPACEWAYS',
+    'FAULCON DELACY',
+    'SAUD KRUGER',
+    'CORE DYNAMICS',
+    'GUTAMAYA'
+  ];
+  if (
+    manufacturer &&
+    makes.includes(manufacturer.toUpperCase().replace(/_/g, ' '))
+  ) {
+    database('ships')
+      .select(...shipAttributes)
+      .where('make', manufacturer.toUpperCase().replace(/_/g, ' '))
+      .then(ships => response.status(200).json(ships));
+  } else if (manufacturer) {
+    return response.status(404).json({
+      error: `No manufacturer under the name ${manufacturer
+        .toUpperCase()
+        .replace(/_/g, ' ')}`
+    });
+  } else if (!manufacturer) {
+    database('ships')
+      .select(...shipAttributes)
+      .then(ships => response.status(200).json(ships))
+      .catch(error => response.status(500).json({ error }));
+  }
+});
+
+app.get('/api/v1/shipyard', (request, response) => {
+  database
+    .raw(
+      `SELECT pilots.id AS pilot_id, pilots.pilot_federation_id, pilots.callsign, json_agg(ships.*) AS ships ` +
+        'FROM pilots ' +
+        'INNER JOIN pilot_ships ON pilots.id = pilot_ships.pilot_id ' +
+        'INNER JOIN ships ON pilot_ships.ship_id = ships.id ' +
+        'GROUP BY pilots.id'
+    )
+    .then(data => response.status(200).json(data.rows))
+    .catch(error => response.status(500).json({ error }));
+});
+
+app.get('/api/v1/shipyard/:pilot_id', (request, response) => {
+  database
+    .raw(
+      `SELECT pilots.id AS pilot_id, pilots.pilot_federation_id, pilots.callsign, json_agg(ships.*) AS ships ` +
+        'FROM pilots ' +
+        'INNER JOIN pilot_ships ON pilots.id = pilot_ships.pilot_id ' +
+        'INNER JOIN ships ON pilot_ships.ship_id = ships.id ' +
+        `WHERE pilots.id = ${request.params.pilot_id}` +
+        'GROUP BY pilots.id'
+    )
+    .then(data => {
+      if (data.rows.length) {
+        response.status(200).json(data.rows);
+      } else {
+        response
+          .status(404)
+          .json({ error: 'No ships in storage under this pilot ID' });
+      }
+    })
     .catch(error => response.status(500).json({ error }));
 });
 
@@ -74,4 +135,49 @@ app.get('/api/v1/ships/:id', (request, response) => {
       }
     })
     .catch(error => response.status(500).json({ error }));
+});
+
+app.post('/api/v1/pilots', (request, response) => {
+  const { pilot } = request.body;
+  if (pilot) {
+    database('pilots')
+      .insert({ ...pilot, is_wanted: false }, 'id')
+      .then(id => response.status(201).json(...id));
+  } else {
+    return response
+      .status(404)
+      .send({ error: 'Pilot key not present in payload.' });
+  }
+});
+
+app.post('/api/v1/shipyard', (request, response) => {
+  const { pilot_id, ship_id } = request.body;
+  if (pilot_id && ship_id) {
+    database('pilot_ships')
+      .insert({ ...request.body }, 'pilot_id')
+      .then(id => response.status(201).json(...id));
+  } else {
+    return response
+      .status(404)
+      .send({ error: 'Pilot key not present in payload.' });
+  }
+});
+
+app.delete('/api/v1/pilots', (request, response) => {
+  const { pilot_id } = request.body;
+  if (pilot_id) {
+    database('pilot_ships')
+      .where('pilot_id', pilot_id)
+      .del()
+      .then(() =>
+        database('pilots')
+          .where('id', pilot_id)
+          .del()
+          .then(() => response.status(202).json(pilot_id))
+      );
+  } else {
+    return response
+      .status(404)
+      .send({ error: 'pilot_id key not present in payload.' });
+  }
 });
