@@ -149,3 +149,16 @@ app.post('/api/v1/pilots', (request, response) => {
   }
 });
 
+app.post('/api/v1/shipyard', (request, response) => {
+  const { pilot_id, ship_id } = request.body;
+  if (pilot_id && ship_id) {
+    database('pilot_ships')
+      .insert({ ...request.body }, 'pilot_id')
+      .then(id => response.status(201).json(...id));
+  } else {
+    return response
+      .status(404)
+      .send({ error: 'Pilot key not present in payload.' });
+  }
+});
+
