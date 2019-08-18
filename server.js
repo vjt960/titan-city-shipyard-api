@@ -31,10 +31,35 @@ app.get('/api/v1/pilots', (request, response) => {
 
 app.get('/api/v1/ships', (request, response) => {
   const shipAttributes = ['id', 'make', 'model', 'pad_size', 'cost'];
+  const { manufacturer } = request.query;
+  const makes = [
+    'ZORGON PETERSON',
+    'LAKON SPACEWAYS',
+    'FAULCON DELACY',
+    'SAUD KRUGER',
+    'CORE DYNAMICS',
+    'GUTAMAYA'
+  ];
+  if (
+    manufacturer &&
+    makes.includes(manufacturer.toUpperCase().replace(/_/g, ' '))
+  ) {
   database('ships')
     .select(...shipAttributes)
+      .where('make', manufacturer.toUpperCase().replace(/_/g, ' '))
+      .then(ships => response.status(200).json(ships));
+  } else if (manufacturer) {
+    return response.status(404).json({
+      error: `No manufacturer under the name ${manufacturer
+        .toUpperCase()
+        .replace(/_/g, ' ')}`
+    });
+  } else if (!manufacturer) {
+    database('ships')
+      .select(...shipAttributes)
     .then(ships => response.status(200).json(ships))
     .catch(error => response.status(500).json({ error }));
+  }
 });
 
 app.get('/api/v1/shipyard', (request, response) => {
