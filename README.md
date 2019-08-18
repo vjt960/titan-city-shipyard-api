@@ -7,7 +7,7 @@ The Titan City Shipyard is ready to go.
 The Titan City Shipyard API is a shipyard database for Titan City, an internation space station where commanders of the Pilots Federation come and go by the hour. This API allows for access and management of shipyard activity regarding pilots and their ships. 
 
 ### Schema 
-![Schema](assets/shipyard-schema.png); 
+![Schema](assets/shipyard-schema.png)
 
 ### Tech Emphasis 
 - JavaScript 
@@ -28,14 +28,7 @@ The Titan City Shipyard API is a shipyard database for Titan City, an internatio
 | `http://localhost:3001/api/v1/pilots/:id` | GET | not needed | Object of the specified pilot: `` |
 | `http://localhost:3001/api/v1/ships/:id` | GET | not needed | Object of the specified ship: `` |
 | `http://localhost:3001/api/v1/shipyard/:pilot_id` | GET | not needed | Selected pilot containing an array of their ships stored in the shipyard: `` |
-| `http://localhost:3001/api/v1/pilots` | POST | `body: {
-	"pilot": {
-		"pilot_federation_id": <SEVEN DIGIT NUMBER NOT STARTING WITH 0>, 
-		"first_name": <STRING>, 
-		"last_name": <STRING>, 
-		"callsign": <STRING>
-	}
-}` | Add a new pilot to the shipyard database: `` |
+| `http://localhost:3001/api/v1/pilots` | POST | `"pilot": {"pilot_federation_id": <SEVEN DIGIT NUMBER NOT STARTING WITH 0>, "first_name": <STRING>, "last_name": <STRING>, "callsign": <STRING>}` | Add a new pilot to the shipyard database: `` |
 | `http://localhost:3001/api/v1/shipyard` | POST | `{
 	"pilot_id": <NUMBER>, 
 	"ship_id": <NUMBER>
