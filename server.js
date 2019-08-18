@@ -63,17 +63,17 @@ app.get('/api/v1/ships', (request, response) => {
 });
 
 app.get('/api/v1/shipyard', (request, response) => {
-  // const shipAttributes = ['id', 'make', 'model', 'pad_size', 'cost'];
-  const pilotAttributes = [
-    'pilots.id',
-    'pilots.pilot_federation_id',
-    'pilots.callsign',
-    'pilot_ships.ship_id'
-  ];
-  database('pilots')
-    .join('pilot_ships', 'pilots.id', '=', 'pilot_ships.pilot.id')
-    .select(...pilotAttributes)
-    .then(data => response.status(200).json(data));
+  database
+    .raw(
+      `SELECT pilots.id AS pilot_id, pilots.pilot_federation_id, pilots.callsign, json_agg(ships.*) AS ships ` +
+        'FROM pilots ' +
+        'INNER JOIN pilot_ships ON pilots.id = pilot_ships.pilot_id ' +
+        'INNER JOIN ships ON pilot_ships.ship_id = ships.id ' +
+        'GROUP BY pilots.id'
+    )
+    .then(data => response.status(200).json(data.rows))
+    .catch(error => response.status(500).json({ error }));
+});
 });
 
 app.get('/api/v1/pilots/:id', (request, response) => {
