@@ -74,6 +74,27 @@ app.get('/api/v1/shipyard', (request, response) => {
     .then(data => response.status(200).json(data.rows))
     .catch(error => response.status(500).json({ error }));
 });
+
+app.get('/api/v1/shipyard/:pilot_id', (request, response) => {
+  database
+    .raw(
+      `SELECT pilots.id AS pilot_id, pilots.pilot_federation_id, pilots.callsign, json_agg(ships.*) AS ships ` +
+        'FROM pilots ' +
+        'INNER JOIN pilot_ships ON pilots.id = pilot_ships.pilot_id ' +
+        'INNER JOIN ships ON pilot_ships.ship_id = ships.id ' +
+        `WHERE pilots.id = ${request.params.pilot_id}` +
+        'GROUP BY pilots.id'
+    )
+    .then(data => {
+      if (data.rows.length) {
+        response.status(200).json(data.rows);
+      } else {
+        response
+          .status(404)
+          .json({ error: 'No ships in storage under this pilot ID' });
+      }
+    })
+    .catch(error => response.status(500).json({ error }));
 });
 
 app.get('/api/v1/pilots/:id', (request, response) => {
