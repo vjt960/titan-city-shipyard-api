@@ -2,7 +2,8 @@ const express = require('express');
 const app = express();
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
-const database = require('knex')(configuration);
+const knex = require('knex');
+const database = knex(configuration);
 
 app.set('port', process.env.PORT || 3000);
 app.use(express.json());
@@ -44,8 +45,8 @@ app.get('/api/v1/ships', (request, response) => {
     manufacturer &&
     makes.includes(manufacturer.toUpperCase().replace(/_/g, ' '))
   ) {
-  database('ships')
-    .select(...shipAttributes)
+    database('ships')
+      .select(...shipAttributes)
       .where('make', manufacturer.toUpperCase().replace(/_/g, ' '))
       .then(ships => response.status(200).json(ships));
   } else if (manufacturer) {
@@ -57,8 +58,8 @@ app.get('/api/v1/ships', (request, response) => {
   } else if (!manufacturer) {
     database('ships')
       .select(...shipAttributes)
-    .then(ships => response.status(200).json(ships))
-    .catch(error => response.status(500).json({ error }));
+      .then(ships => response.status(200).json(ships))
+      .catch(error => response.status(500).json({ error }));
   }
 });
 
@@ -162,3 +163,21 @@ app.post('/api/v1/shipyard', (request, response) => {
   }
 });
 
+app.delete('/api/v1/pilots', (request, response) => {
+  const { pilot_id } = request.body;
+  if (pilot_id) {
+    database('pilot_ships')
+      .where('pilot_id', pilot_id)
+      .del()
+      .then(() =>
+        database('pilots')
+          .where('id', pilot_id)
+          .del()
+          .then(() => response.status(202).json(pilot_id))
+      );
+  } else {
+    return response
+      .status(404)
+      .send({ error: 'pilot_id key not present in payload.' });
+  }
+});
