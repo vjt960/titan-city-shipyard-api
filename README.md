@@ -10,7 +10,7 @@ In your browser:
 Open localhost://3000/
 
 ### Description 
-The Titan City Shipyard API is a shipyard database for Titan City, an internation space station where commanders of the Pilots Federation come and go by the hour. This API allows for access and management of shipyard activity regarding pilots and their ships. 
+The Titan City Shipyard API is a shipyard database based on the video game Elite: Dangerous. This API serves as a shipyard database for Titan City, a space station in the Sol system where commanders of the Pilots Federation come and go by the hour. This API allows for access and management of shipyard activity regarding pilots and their ships. 
 
 ### Schema 
 ![Schema](assets/shipyard-schema.png)
