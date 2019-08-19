@@ -1,7 +1,13 @@
 ## Titan City Shipyard
 
-### Set Up 
-The Titan City Shipyard is ready to go. 
+### Installation and SetUp
+From the command line:
+1. `git clone https://github.com/vjt960/titan-city-shipyard-api.git <PROJECT_NAME>`
+1. Run `npm install`
+1. Run `npm start`
+
+In your browser:
+Open localhost://3000/
 
 ### Description 
 The Titan City Shipyard API is a shipyard database for Titan City, an internation space station where commanders of the Pilots Federation come and go by the hour. This API allows for access and management of shipyard activity regarding pilots and their ships. 
