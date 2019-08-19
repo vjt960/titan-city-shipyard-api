@@ -20,16 +20,17 @@ The Titan City Shipyard API is a shipyard database for Titan City, an internatio
 
 ### Endpoints
 
-| url | verb | options | sample response |
+| url | verb | options | expected response |
 | ----|------|---------|---------------- |
-| `http://localhost:3001/api/v1/pilots` | GET | not needed | Array of all pilots in database |
-| `http://localhost:3001/api/v1/ships` | GET | not needed | Array of all accepted ship models |
-| `http://localhost:3001/api/v1/shipyard` | GET | not needed | Array of all pilots and ships they own in the shipyard |
-| `http://localhost:3001/api/v1/pilots/:id` | GET | not needed | Object of the specified pilot |
-| `http://localhost:3001/api/v1/ships/:id` | GET | not needed | Object of the specified ship |
-| `http://localhost:3001/api/v1/shipyard/:pilot_id` | GET | not needed | Selected pilot containing an array of their ships stored in the shipyard |
-| `http://localhost:3001/api/v1/pilots` | POST | `"pilot": {"pilot_federation_id": <SEVEN DIGIT NUMBER NOT STARTING WITH 0>, "first_name": <STRING>, "last_name": <STRING>, "callsign": <STRING>}` | Add a new pilot to the shipyard database: `` |
-| `http://localhost:3001/api/v1/shipyard` | POST | `{"pilot_id": <NUMBER>, "ship_id": <NUMBER>}` | Add new ship to shipyard; assigned to specified pilot |
-| `http://localhost:3001/api/v1/pilots` | DELETE | `{"pilot_id": <NUMBER>}` | Delete selected pilot and all records of their ships stored in the shipyard database |
+| `https://ed-shipyard.herokuapp.com/api/v1/pilots` | GET | not needed | Array of all pilots in database |
+| `https://ed-shipyard.herokuapp.com/api/v1/ships` | GET | not needed | Array of all accepted ship models |
+| `https://ed-shipyard.herokuapp.com/api/v1/shipyard` | GET | not needed | Array of all pilots and ships they own in the shipyard |
+| `https://ed-shipyard.herokuapp.com/api/v1/ships?manufacturer=<SHIP_MAKE>` | GET | not needed | Array of ships filtered by make |
+| `https://ed-shipyard.herokuapp.com/api/v1/pilots/:id` | GET | not needed | Object of the specified pilot |
+| `https://ed-shipyard.herokuapp.com/api/v1/ships/:id` | GET | not needed | Object of the specified ship |
+| `https://ed-shipyard.herokuapp.com/api/v1/shipyard/:pilot_id` | GET | not needed | Selected pilot containing an array of their ships stored in the shipyard |
+| `https://ed-shipyard.herokuapp.com/api/v1/pilots` | POST | `"pilot": {"pilot_federation_id": <SEVEN DIGIT NUMBER NOT STARTING WITH 0>, "first_name": <STRING>, "last_name": <STRING>, "callsign": <STRING>}` | Add a new pilot to the shipyard database: `` |
+| `https://ed-shipyard.herokuapp.com/api/v1/shipyard` | POST | `{"pilot_id": <NUMBER>, "ship_id": <NUMBER>}` | Add new ship to shipyard; assigned to specified pilot |
+| `https://ed-shipyard.herokuapp.com/api/v1/pilots` | DELETE | `{"pilot_id": <NUMBER>}` | Delete selected pilot and all records of their ships stored in the shipyard database |
 
 Note: All of these endpoints will return semantic errors if something is wrong with the request.
