@@ -172,7 +172,9 @@ app.get('/api/v1/shipyard/:pilot_id', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
+// This GET endpoint returns a specified pilot by ID from the pilots table
 app.get('/api/v1/pilots/:id', (request, response) => {
+  //This variable is an array of the columns that I will be selecting from
   const pilotAttributes = [
     'id',
     'pilot_federation_id',
@@ -181,20 +183,28 @@ app.get('/api/v1/pilots/:id', (request, response) => {
     'callsign',
     'is_wanted'
   ];
+  // Select the columns as named in the array stored in the pilotAttributes variable
   database
     .select(...pilotAttributes)
+    // ... From the pilots table...
     .from('pilots')
+    // Only the rows where the ID matches the ID in the request parameter
     .where('id', request.params.id)
+    // Then, if there are data in the pilots table that meet the criteria defined in the where clause...
     .then(pilot => {
       if (pilot.length) {
+        // Return that data
         return response.status(200).json(...pilot);
       } else {
+        // Otherwise, return 404 status code *Not Found
         return response.sendStatus(404);
       }
     })
+    // Return 500 status code error if unsuccessful
     .catch(error => response.status(500).json({ error }));
 });
 
+// This endpoint returns a specified ship by ID from the ships table in the same manner as the previous
 app.get('/api/v1/ships/:id', (request, response) => {
   const shipAttributes = ['id', 'make', 'model', 'pad_size', 'cost'];
   database
@@ -211,45 +221,72 @@ app.get('/api/v1/ships/:id', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
+// This POST endpoint adds a new pilot to the pilots table in the database
 app.post('/api/v1/pilots', (request, response) => {
+  // Destructure pilot from the body object of the request
   const { pilot } = request.body;
+  // If the body object from the request provides a pilot object in the payload...
   if (pilot) {
+    // Access the pilots table from the database...
     database('pilots')
+      // ...and Insert the new pilot object, add is_wanted column with default value: false; return the ID from that newly created record...
       .insert({ ...pilot, is_wanted: false }, 'id')
+      // ...then return the ID in the response object
       .then(id => response.status(201).json(...id));
+    // ...however, if the request body does not contain a pilot object...
   } else {
+    // return a 404 error status code with message
     return response
       .status(404)
       .send({ error: 'Pilot key not present in payload.' });
   }
 });
 
+// This POST method adds a record to the pilot_ships join table
 app.post('/api/v1/shipyard', (request, response) => {
+  // Destructure pilot_id and ship_id from the request.body object
   const { pilot_id, ship_id } = request.body;
+
+  // If the body object contains keys pilot_id and ship_id...
   if (pilot_id && ship_id) {
+    // Access the pilot_ships table in the database
     database('pilot_ships')
+      // Insert new pilot_ships entry and return the pilot_id from that new record
       .insert({ ...request.body }, 'pilot_id')
+      // ...then return the ID in the response object
       .then(id => response.status(201).json(...id));
   } else {
+    // return 404 status code if pilot_id and ship_id are not present in the payload
     return response
       .status(404)
       .send({ error: 'Pilot key not present in payload.' });
   }
 });
 
+// This DELETE endpoint removes a pilot from the pilots table and all child records within the pilot_ships join table
 app.delete('/api/v1/pilots', (request, response) => {
+  // Destructure pilot_id from the request body object
   const { pilot_id } = request.body;
+  // if the request body object contains the pilot_id key
   if (pilot_id) {
+    // Access pilot_ships table in the database
     database('pilot_ships')
+      // only access the records where the value of in the pilot_id column match the pilot_id value from the request body
       .where('pilot_id', pilot_id)
+      // delete those records
       .del()
+      // then access the pilots table
       .then(() =>
         database('pilots')
+          // access the record where the ID equals the pilot_id from the request body
           .where('id', pilot_id)
+          // and delete that pilot record
           .del()
+          // then return the ID of the deleted pilot
           .then(() => response.status(202).json(pilot_id))
       );
   } else {
+    // handle error with 404 status code if pilot_id is not in the request body
     return response
       .status(404)
       .send({ error: 'pilot_id key not present in payload.' });
